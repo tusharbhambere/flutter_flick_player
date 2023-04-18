@@ -42,12 +42,21 @@ class FlickControlManager extends ChangeNotifier {
   void exitFullscreen() {
     if (kIsWeb) {
       // trigger controllers again after exiting full screen in web
+      final playerController =
+          _flickManager.flickVideoManager?.videoPlayerController;
+      final position =
+          _flickManager.flickVideoManager?.videoPlayerValue?.position;
+      if (playerController != null && position != null) {
+        _flickManager.handleChangeVideo(
+            VideoPlayerController.network(playerController.dataSource));
+      }
       togglePlay();
       _notify();
-      Future.delayed(Duration(seconds: 1), () {
-        togglePlay();
-        _notify();
-      });
+      if (position != null) {
+        Future.delayed(Duration(milliseconds: 300), () {
+          _flickManager.flickControlManager!.seekTo(position);
+        });
+      }
     }
     _isFullscreen = false;
     _flickManager._handleToggleFullscreen();
@@ -222,9 +231,9 @@ class FlickControlManager extends ChangeNotifier {
   double _verifyVolumeBounds(double volume) {
     var boundedVolume;
     if (volume > 1) {
-      boundedVolume = 1;
+      boundedVolume = 1.0;
     } else if (volume < 0) {
-      boundedVolume = 0;
+      boundedVolume = 0.0;
     } else {
       boundedVolume = double.parse(volume.toStringAsFixed(2));
     }
