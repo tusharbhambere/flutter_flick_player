@@ -50,18 +50,15 @@ class FlickControlManager extends ChangeNotifier {
       if (playerController != null && position != null) {
         _flickManager.handleChangeVideo(
             VideoPlayerController.network(playerController.dataSource));
-      }
-      if (isPlayerPlaying) {
-        togglePlay();
-        _notify();
+        pause();
       }
       if (position != null) {
-        Future.delayed(Duration(milliseconds: 700), () {
+        Future.delayed(Duration(seconds: 1), () {
           _flickManager.flickControlManager!.seekTo(position);
           if (!isPlayerPlaying) {
             pause();
-            _notify();
           }
+          _notify();
         });
       }
     }
