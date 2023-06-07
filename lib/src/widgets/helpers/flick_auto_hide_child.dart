@@ -9,13 +9,13 @@ class FlickAutoHideChild extends StatelessWidget {
   const FlickAutoHideChild({
     Key? key,
     required this.child,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor,
     this.autoHide = true,
     this.showIfVideoNotInitialized = true,
   }) : super(key: key);
   final Widget child;
   final bool autoHide;
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// Show the child if video is not initialized.
   final bool showIfVideoNotInitialized;
@@ -34,7 +34,9 @@ class FlickAutoHideChild extends StatelessWidget {
                 transitionBuilder: (child, animation) {
                   return FadeTransition(
                     opacity: animation,
-                    child: Container(color: backgroundColor, child: child),
+                    child: backgroundColor != null
+                        ? Container(color: backgroundColor, child: child)
+                        : child,
                   );
                 },
                 child:
